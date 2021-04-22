@@ -1,7 +1,7 @@
 # fivem-target
 
-Original: https://github.com/brentN5/bt-target
-Icons: https://fontawesome.com/
+## Original: https://github.com/brentN5/bt-target
+## Icons: https://fontawesome.com/
 
 Mostly re-written version of bt-target.
 
