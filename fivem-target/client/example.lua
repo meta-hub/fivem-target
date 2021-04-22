@@ -26,6 +26,10 @@ RegisterCommand('test_polyzone',function()
       {
         name = "open_menu",
         label = "Open Menu"
+      },
+      {
+        name = "open_menu",
+        label = "Sell House"
       }
     },
     vars = {
@@ -43,16 +47,20 @@ RegisterCommand('test_point',function()
 
   exports["fivem-target"]:AddTargetPoint({
     name = "test_point",
-    label = "House",
-    icon = "fas fa-home",
+    label = "Door",
+    icon = "fas fa-door-open",
     point = pos,
     interactDist = 2.5,
     onInteract = onInteract,
     options = {
       {
-        name = "open_menu",
-        label = "Open Menu"
-      }
+        name = "enter_house",
+        label = "Enter"
+      },      
+      {
+        name = "enter_house",
+        label = "Unlock"
+      },     
     },
     vars = {
       whatever = "whatever"

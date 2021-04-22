@@ -20,13 +20,20 @@
 
 .target-label {
     list-style: none;
-    font-size: 1.3vh;
+    font-size: 1.2vh;
     font-weight: bold;
     font-family: sans-serif;
     color: white;
     text-transform: uppercase;
     user-select: none;
     white-space: nowrap;
+}
+
+.header {
+    font-weight: bold;
+    font-family: sans-serif;
+    color: rgb(30,144,255);   
+    font-size: 1.6vh; 
 }
 
 .target-icon {
