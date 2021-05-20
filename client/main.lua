@@ -59,6 +59,11 @@ function HandleFocus()
               if not activeTargets[v.name] then
                 updateTargets = true
               end
+            else
+              if activeTargets[v.name] then
+                activeTargets[v.name] = nil
+                updateTargets = true
+              end
             end
           else
             if activeTargets[v.name] then
@@ -83,6 +88,11 @@ function HandleFocus()
               if not activeTargets[v.name] then
                 updateTargets = true
               end
+            else
+              if activeTargets[v.name] then
+                activeTargets[v.name] = nil
+                updateTargets = true
+              end
             end
           else
             if activeTargets[v.name] then
@@ -90,6 +100,35 @@ function HandleFocus()
               updateTargets = true
             end
           end
+        end
+      end
+    elseif v.typeof == "entity" then
+      if entityHit > 0 then
+        local netId = NetworkGetNetworkIdFromEntity(entityHit)
+        if netId == v.netId then
+          local dist = #(GetEntityCoords(entityHit) - endCoords)
+          if dist <= v.interactDist and #(pos - GetEntityCoords(entityHit)) <= v.interactDist then
+            targets[v.name] = v
+            v.entityHit = entityHit
+            if not activeTargets[v.name] then
+              updateTargets = true
+            end
+          else
+            if activeTargets[v.name] then
+              activeTargets[v.name] = nil
+              updateTargets = true
+            end
+          end
+        else
+          if activeTargets[v.name] then
+            activeTargets[v.name] = false
+            updateTargets = true
+          end
+        end
+      else
+        if activeTargets[v.name] then
+          activeTargets[v.name] = false
+          updateTargets = true
         end
       end
     elseif v.typeof == "polyzone" then
@@ -140,6 +179,22 @@ function HandleClick()
     })
   end
 end
+
+exports('AddTargetEntity',function(opts)
+  if not opts or not opts.name or not opts.label or not opts.netId or not opts.options then error("Invalid opts for AddTargetEntity",1) return end
+  table.insert(allTargets,{
+    typeof        = "entity",
+    name          = opts.name,
+    label         = opts.label,
+    icon          = opts.icon or "fas fa-question",
+    netId         = opts.netId,
+    interactDist  = opts.interactDist or 2.5,
+    onInteract    = opts.onInteract,
+    options       = opts.options,
+    vars          = opts.vars,
+    resource      = GetInvokingResource()
+  })  
+end)
 
 exports('AddTargetPoint',function(opts) 
   if not opts or not opts.name or not opts.label or not opts.point or not opts.options then error("Invalid opts for AddTargetPoint",1) return end
@@ -283,4 +338,6 @@ RegisterNUICallback('select',function(d)
       end
     end
   end
+
+  selecting = false
 end)

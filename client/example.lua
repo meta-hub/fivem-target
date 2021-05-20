@@ -71,6 +71,47 @@ RegisterCommand('test_model',function()
   })
 end)
 
+RegisterCommand('test_entity',function()
+  local plyPed = PlayerPedId()
+  local pos = GetEntityCoords(plyPed)
+  local ents = {}
+  local i,ent,_ = FindFirstPed()
+
+  while ent and ent > 0 do
+    if ent ~= plyPed then
+      table.insert(ents,{
+        ent = ent,
+        dist = #(GetEntityCoords(ent) - pos)
+      })
+    end
+    _,ent = FindNextPed(i)
+  end
+
+  EndFindPed(i)
+
+  table.sort(ents,function(a,b)
+    return a.dist < b.dist
+  end)
+
+  exports["fivem-target"]:AddTargetEntity({
+    name = "test_net_id",
+    label = "Random Ped",
+    icon = "fas fa-door-open",
+    netId = NetworkGetNetworkIdFromEntity(ents[1].ent),
+    interactDist = 10.0,
+    onInteract = onInteract,
+    options = {
+      {
+        name = "distract",
+        label = "Distract"
+      }
+    },
+    vars = {
+      whatever = "whatever"
+    }
+  })
+end)
+
 onInteract = function(targetName,optionName,vars,entityHit)
   if optionName == "distract" then
     ClearPedTasksImmediately(entityHit)
