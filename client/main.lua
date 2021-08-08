@@ -149,6 +149,7 @@ function HandleFocus()
   activeTargets = targets
 
   if updateTargets then
+    updateTargets = false
     if Utils.TableCount(activeTargets) == 0 then
       SendNUIMessage({
         type = "leftTarget"
