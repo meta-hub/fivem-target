@@ -2,16 +2,16 @@ local allTargets = {}
 local activeTargets = {}
 local focusActive = false
 local selecting = false
+local Control ={ 24, 229, 257 }
 
 Citizen.CreateThread(function()
   while true do
     local waitTime = 500
     if focusActive then
-      DisableControlAction(0,24,true)
 
       HandleFocus()
 
-      if not selecting and (IsControlJustPressed(0,24) or IsDisabledControlJustPressed(0,24)) then
+      if not selecting and IsDisabledControlJustReleased(0, 24)) then
         HandleClick()
       end
 
@@ -22,10 +22,19 @@ Citizen.CreateThread(function()
   end
 end)
 
+function DisableClick()
+	
+	for _, control in ipairs(Control) do
+		DisableControlAction(0, control, true)
+	end
+end
+
 function HandleFocus()
   local pos = GetEntityCoords(PlayerPedId())
   local hit,endCoords,entityHit = Utils.ScreenToWorld()
-
+  
+  DisableClick()
+  
   local hitValidModel = false
   if entityHit > 0 and GetEntityType(entityHit) > 0 then
     hitValidModel = true
