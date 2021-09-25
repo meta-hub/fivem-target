@@ -5,7 +5,7 @@ ui_page 'html/index.html'
 
 client_scripts {  
 	'utils.lua',
-	'client/main.lua'
+  'client/main.lua'
 }
 
 files {

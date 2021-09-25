@@ -2,6 +2,7 @@ local allTargets = {}
 local activeTargets = {}
 local focusActive = false
 local selecting = false
+local updateTargets = false
 
 Citizen.CreateThread(function()
   while true do
@@ -32,7 +33,6 @@ function HandleFocus()
   end
 
   local targets = {}
-  local updateTargets = false
 
   for k,v in ipairs(allTargets) do
     if v.typeof == "point" then
@@ -104,8 +104,9 @@ function HandleFocus()
       end
     elseif v.typeof == "entity" then
       if entityHit > 0 then
-        local netId = NetworkGetNetworkIdFromEntity(entityHit)
-        if netId == v.netId then
+        if v.entId and v.entId == entityHit
+        or v.netId and v.netId == NetworkGetNetworkIdFromEntity(entityHit) 
+        then
           local dist = #(GetEntityCoords(entityHit) - endCoords)
           if dist <= v.interactDist and #(pos - GetEntityCoords(entityHit)) <= v.interactDist then
             targets[v.name] = v
@@ -197,6 +198,22 @@ exports('AddTargetEntity',function(opts)
   })  
 end)
 
+exports('AddTargetLocalEntity',function(opts)
+  if not opts or not opts.name or not opts.label or not opts.entId or not opts.options then error("Invalid opts for AddTargetEntity",1) return end
+  table.insert(allTargets,{
+    typeof        = "entity",
+    name          = opts.name,
+    label         = opts.label,
+    icon          = opts.icon or "fas fa-question",
+    entId         = opts.entId,
+    interactDist  = opts.interactDist or 2.5,
+    onInteract    = opts.onInteract,
+    options       = opts.options,
+    vars          = opts.vars,
+    resource      = GetInvokingResource()
+  })  
+end)
+
 exports('AddTargetPoint',function(opts) 
   if not opts or not opts.name or not opts.label or not opts.point or not opts.options then error("Invalid opts for AddTargetPoint",1) return end
   table.insert(allTargets,{
@@ -251,11 +268,6 @@ exports('AddPolyZone',function(opts)
   local name = opts.name
   local index = #allTargets+1
   local isInside = opts.isInside or false
-  function __internalSetInside(inside)
-    if allTargets[index].name == name then
-      allTargets[index].inside = inside
-    end
-  end
 
   allTargets[index] = {
     typeof        = "polyzone",
@@ -269,13 +281,22 @@ exports('AddPolyZone',function(opts)
     resource      = GetInvokingResource()
   }
 
-  return __internalSetInside
+  return (function(inside)
+    if not allTargets[index] then
+      return
+    end
+    
+    if allTargets[index].name == name then
+      allTargets[index].inside = inside
+    end
+  end)
 end)
 
 exports('RemoveTargetPoint',function(name)
   for k,v in ipairs(allTargets) do
     if v.name == name then
       table.remove(allTargets,k)
+      updateTargets = true
       return
     end
   end
