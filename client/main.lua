@@ -12,7 +12,7 @@ Citizen.CreateThread(function()
 
       HandleFocus()
 
-      if not selecting and (IsControlJustPressed(0,24) or IsDisabledControlJustPressed(0,24)) then
+      if not selecting and (IsControlJustReleased(0,24) or IsDisabledControlJustReleased(0,24)) then
         HandleClick()
       end
 
