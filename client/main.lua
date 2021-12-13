@@ -9,6 +9,11 @@ Citizen.CreateThread(function()
     local waitTime = 500
     if focusActive then
       DisableControlAction(0,24,true)
+      DisableControlAction(0,69,true)
+      DisableControlAction(0,92,true)
+      DisableControlAction(0,142,true)
+      DisableControlAction(0,257,true)
+      DisableControlAction(0,346,true)
 
       HandleFocus()
 
