@@ -271,10 +271,9 @@ exports('AddPolyZone',function(opts)
   if not opts or not opts.name or not opts.label or not opts.options then error("Invalid opts for AddPolyZone",1) return end
 
   local name = opts.name
-  local index = #allTargets+1
   local isInside = opts.isInside or false
 
-  allTargets[index] = {
+  local t = {
     typeof        = "polyzone",
     name          = opts.name,
     label         = opts.label,
@@ -285,15 +284,11 @@ exports('AddPolyZone',function(opts)
     vars          = opts.vars,
     resource      = GetInvokingResource()
   }
-
-  return (function(inside)
-    if not allTargets[index] then
-      return
-    end
     
-    if allTargets[index].name == name then
-      allTargets[index].inside = inside
-    end
+  table.insert(allTargets,t)
+
+  return (function(inside)    
+    t.inside = inside
   end)
 end)
 
